@@ -1,119 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:productivity/common/utils/utils.dart';
 import 'package:productivity/style/style.dart';
-class HorizontalCalendar extends StatefulWidget {
-  final double height;
-  final double width;
-  final EdgeInsets padding;
-  final EdgeInsets margin;
-  final int month;
-  final int year;
-  final int selectedDate; // this is immutable
-  HorizontalCalendar({
-    @required this.year = 2020,
-    @required this.month = 2,
-    this.selectedDate,
-    this.height,
-    this.width,
-    this.margin = const EdgeInsets.all(0),
-    this.padding = const EdgeInsets.all(0),
-  });
+import 'package:intl/intl.dart';
+import 'calendar_widget.dart';
 
+class Calendar extends StatefulWidget {
   @override
-  _HorizontalCalendarState createState() => _HorizontalCalendarState();
+  _CalendarState createState() => _CalendarState();
 }
 
-class _HorizontalCalendarState extends State<HorizontalCalendar> {
-  int selectedDay; // this is mutable
+class _CalendarState extends State<Calendar> {
+  DateTime _now = Date().getCurrentDate();
 
-  @override
-  void initState() {
-    selectedDay = widget.selectedDate;
-    super.initState();
-  }
+  DateTime _selectedDate = Date().getCurrentDate();
 
   @override
   Widget build(BuildContext context) {
+    final Size _size = MediaQuery.of(context).size;
     return Container(
-      width: widget.width,
-      height: widget.height,
-      margin: widget.margin,
-      padding: widget.padding,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: DateTime(widget.year, widget.month + 1, 0).day,
-        itemBuilder: (context, index) {
-          index = index + 1;
-          DateTime date = DateTime(widget.year, widget.month, index);
-          return DayWidget(
-            day: index,
-            dayName: DateFormat('EEEE').format(date).substring(0, 2),
-            selected: selectedDay == index ? true : false,
-            callback: (int day) {
-              selectedDay = day;
-              setState(() {});
+      color: backgroundColor3,
+      child: Column(
+        children: [
+
+          Container(
+              margin: EdgeInsets.symmetric(horizontal: margin),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    width: 60,
+                    child: Icon(
+                      Icons.settings,
+                      color: iconColor,
+                      size: 25,
+                    ),
+                  ),
+                  Text(
+                    _selectedDate == _now
+                        ? "Today"
+                        : "${_selectedDate.day} ${DateFormat('MMMM').format(_now).substring(0, 3)}",
+                    style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: iconColor),
+                  ),
+                  _selectedDate != _now
+                      ? GestureDetector(
+                          onTap: () {
+                            navigateToCurrentDate();
+                            setState(() {
+                              _selectedDate = _now;
+                            });
+                          },
+                          child: Container(
+                            width: 60,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: highlightColor.withOpacity(0.3),
+                                borderRadius:
+                                    BorderRadius.circular(borderRadius)),
+                            child: Center(
+                                child: Text(
+                              'Today',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: highlightColor,
+                                  fontWeight: FontWeight.w800),
+                            )),
+                          ),
+                        )
+                      : SizedBox(width: 60)
+                ],
+              )),
+          HorizontalCalendar(
+            callback: (DateTime date) {
+              setState(() {
+                _selectedDate = date;
+              });
             },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class DayWidget extends StatelessWidget {
-  final int day;
-  final String dayName;
-  final bool selected;
-  final Function(int) callback;
-  final _selectedBackgroundColor = Colors.white.withOpacity(0.1);
-  final _selectedTextColor = Colors.white;
-
-  DayWidget({
-    this.day,
-    this.dayName,
-    this.selected = false,
-    this.callback,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-
-      child: SizedBox(
-        width: 60,
-        child: FlatButton(
-          color: selected ? _selectedBackgroundColor : Colors.transparent,
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(20.0),
-
+            width: _size.width,
+            selectedDate: _selectedDate,
+            height: 50,
           ),
-          onPressed: () {
-            callback(day);
-
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-
-              Text(
-                dayName,
-                style: TextStyle(
-                  color: selected ? _selectedTextColor : Colors.white60,
-                  fontSize: labelFontSize,
-                  fontWeight: selected ? FontWeight.w900 : FontWeight.w300,
-                ),
-              ),
-              Text(
-                day.toString(),
-                style: TextStyle(
-                  color: selected ? _selectedTextColor : Colors.white,
-                  fontSize: labelFontSize+3,
-                  fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
