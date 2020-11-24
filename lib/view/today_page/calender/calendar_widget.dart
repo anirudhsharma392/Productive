@@ -64,7 +64,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.initState();
 
     ///assigns current date
-    _now = Date().getCurrentDate();
+    _now = Date.getCurrentDate();
 
     widget.selectedDate == null
         ? widget.selectedDate = _now
@@ -97,7 +97,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: backgroundColor3,
+      color: backgroundDark,
       width: widget.width,
       height: widget.height,
       margin: widget.margin,

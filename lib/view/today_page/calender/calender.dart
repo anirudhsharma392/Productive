@@ -10,19 +10,20 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  DateTime _now = Date().getCurrentDate();
+  DateTime _now = Date.getCurrentDate();
 
-  DateTime _selectedDate = Date().getCurrentDate();
+  DateTime _selectedDate = Date.getCurrentDate();
 
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     return Container(
-      color: backgroundColor3,
+      color: backgroundDark,
       child: Column(
         children: [
 
           Container(
+            padding: EdgeInsets.only(top: margin),
               margin: EdgeInsets.symmetric(horizontal: margin),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,6 +79,7 @@ class _CalendarState extends State<Calendar> {
               setState(() {
                 _selectedDate = date;
               });
+
             },
             width: _size.width,
             selectedDate: _selectedDate,
